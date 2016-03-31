@@ -1,27 +1,3 @@
-if (typeof Object.assign != 'function') {
-  (function () {
-    Object.assign = function (target) {
-      'use strict';
-      if (target === undefined || target === null) {
-        throw new TypeError('Cannot convert undefined or null to object');
-      }
-
-      var output = Object(target);
-      for (var index = 1; index < arguments.length; index++) {
-        var source = arguments[index];
-        if (source !== undefined && source !== null) {
-          for (var nextKey in source) {
-            if (source.hasOwnProperty(nextKey)) {
-              output[nextKey] = source[nextKey];
-            }
-          }
-        }
-      }
-      return output;
-    };
-  })();
-}
-
 var tuples =
     [
         { ctor: "_Tuple0" },
@@ -130,14 +106,14 @@ var main = function(reducer){
 // This is the function to perform the minification in
 // It takes an object, and should return an object
 // the goal is to preserve the meaning on the object
-var reducer = function(data){
-    var object = Object.assign({}, data);
+var reducer = function(object){
     if (object['ctor']) {
       if ((object['ctor']).charAt(0) === '_') {
         // tuple
-        delete object['ctor'];
         var data = [];
-        Object.keys(object).forEach(function(key) {
+        Object.keys(object).forEach(function(key){
+          if (key === 'ctor') { return; }
+
           var i = parseInt(key.slice(1));
           data[i] = object[key];
         });
